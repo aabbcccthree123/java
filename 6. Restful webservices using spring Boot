@@ -1,0 +1,252 @@
+in google chrome search - spring initializr
+project - maven
+language - java
+spring boot - 4.1.1
+group - com.example
+artifact - employeeapi
+packaging - jar
+java - 17 or 21
+click add right next to dependencies select "spring web"
+
+click generate then a zip file will be downloaded
+
+extract the zip file
+
+go to eclipse > file>import>existing maven project>next>browse>select the extracted file>finish
+
+-------------------------------------------------------------------------------------------
+src/main/java > right click com.example.employeeapi>new>class> name it as - Employee
+
+copy this code
+
+
+package com.example.employeeapi;
+
+public class Employee {
+
+    private int id;
+    private String name;
+    private String department;
+    private double salary;
+
+    public Employee() {
+    }
+
+    public Employee(int id, String name, String department, double salary) {
+        this.id = id;
+        this.name = name;
+        this.department = department;
+        this.salary = salary;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getDepartment() {
+        return department;
+    }
+
+    public void setDepartment(String department) {
+        this.department = department;
+    }
+
+    public double getSalary() {
+        return salary;
+    }
+
+    public void setSalary(double salary) {
+        this.salary = salary;
+    }
+}
+
+
+-------------------------------------------------------------------------------------------
+again right click  com.example.employeeapi>new>class> name it as EmployeeController
+
+copy this code
+
+package com.example.employeeapi;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@RequestMapping("/employees")
+public class EmployeeController {
+
+    private List<Employee> employees = new ArrayList<>();
+
+    public EmployeeController() {
+
+        employees.add(
+            new Employee(1, "Malathi", "Computer Science", 30000)
+        );
+
+        employees.add(
+            new Employee(2, "Priya", "IT", 35000)
+        );
+    }
+
+    // GET - Get all employees
+    @GetMapping
+    public List<Employee> getAllEmployees() {
+        return employees;
+    }
+
+    // GET - Get employee by ID
+    @GetMapping("/{id}")
+    public Employee getEmployeeById(@PathVariable int id) {
+
+        for (Employee employee : employees) {
+            if (employee.getId() == id) {
+                return employee;
+            }
+        }
+
+        return null;
+    }
+
+    // POST - Add employee
+    @PostMapping
+    public Employee addEmployee(@RequestBody Employee employee) {
+
+        employees.add(employee);
+
+        return employee;
+    }
+
+    // PUT - Update employee
+    @PutMapping("/{id}")
+    public Employee updateEmployee(
+            @PathVariable int id,
+            @RequestBody Employee updatedEmployee) {
+
+        for (Employee employee : employees) {
+
+            if (employee.getId() == id) {
+
+                employee.setName(updatedEmployee.getName());
+                employee.setDepartment(updatedEmployee.getDepartment());
+                employee.setSalary(updatedEmployee.getSalary());
+
+                return employee;
+            }
+        }
+
+        return null;
+    }
+
+    // DELETE - Delete employee
+    @DeleteMapping("/{id}")
+    public String deleteEmployee(@PathVariable int id) {
+
+        for (Employee employee : employees) {
+
+            if (employee.getId() == id) {
+
+                employees.remove(employee);
+
+                return "Employee deleted successfully";
+            }
+        }
+
+        return "Employee not found";
+    }
+}
+
+
+-------------------------------------------------------------------------------------
+copy this code in EmployeeApplication.java
+
+package com.example.employeeapi;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class EmployeeapiApplication {
+
+    public static void main(String[] args) {
+        SpringApplication.run(EmployeeapiApplication.class, args);
+    }
+}
+-----------------------------------------------------------------------------------
+copy this code in application.properties
+
+spring.application.name=employeeapi
+server.port=8083
+----------------------------------------------------------------------------------
+open postman create new collection
+
+body>raw>JSON
+
+Select:
+GET
+URL:
+http://localhost:8083/employees
+
+pastethis code and click send
+
+
+[
+    {
+        "id": 1,
+        "name": "Malathi",
+        "department": "Computer Science",
+        "salary": 30000.0
+    },
+    {
+        "id": 2,
+        "name": "Priya",
+        "department": "IT",
+        "salary": 35000.0
+    }
+]
+
+-----------------------------------------------------------------------
+next select POST
+URl http://localhost:8083/employees
+
+paste this code click send
+
+
+{
+    "id": 3,
+    "name": "Kaviya",
+    "department": "Computer Science",
+    "salary": 32000
+}
+
+-----------------------------------------------------------------------
+next select PUT
+URL http://localhost:8083/employees/3
+
+paste this code click send
+
+{
+    "id": 3,
+    "name": "Kaviya",
+    "department": "IT",
+    "salary": 40000
+}
+---------------------------------------------------------------------
+next select DELETE
+URL  http://localhost:8083/employees/3
+
+click send
+
